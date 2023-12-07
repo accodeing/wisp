@@ -1,0 +1,193 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #19121a;
+    --gradient-background: linear-gradient(135deg, #19121a 0%, #4b1f48 100%);
+    --color-header: #f7ffc4;
+    --color-text: #e0e0e0;
+    --color-link: #c348d1;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-background: #f8f8f2;
+    --gradient-background: linear-gradient(135deg, #ffffff 0%, #d7d2e8 100%);
+    --color-header: #282a36;
+    --color-text: #44475a;
+    --color-link: #411746;
+  }
+}
+
+html {
+  background-color: var(--color-background);
+  background-image: var(--gradient-background);
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: var(--color-text);
+  font-family: "Open Sans", sans-serif;
+}
+
+header,
+main {
+  text-align: center;
+}
+
+main {
+  margin-bottom: 10rem;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  padding-block: 2.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  background-color: var(--color-background);
+  mix-blend-mode: difference;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--color-header);
+  font-family: "Wendy One", sans-serif;
+}
+
+a:not(.button),
+a:not(.button):link,
+a:not(.button):visited {
+  color: var(--color-link);
+}
+
+@keyframes zippy {
+  0% {
+    transform: translateX(-300px) translateY(0px) scale(0.1);
+  }
+  10% {
+    transform: translateX(-160px) translateY(0.3px) scale(0.5);
+  }
+  30% {
+    transform: translateX(240px) translateY(8.5px) scale(0.75);
+  }
+  36% {
+    transform: translateX(240px) translateY(10px) scale(0.77);
+  }
+  63% {
+    transform: translateX(-160px) translateY(17px) scale(0.9);
+  }
+  69% {
+    transform: translateX(-160px) translateY(25px) scale(0.91);
+  }
+  85% {
+    transform: translateX(70px) translateY(20px) scale(0.92);
+  }
+  93% {
+    transform: translateX(55px) translateY(18px) scale(0.93);
+  }
+  100% {
+    transform: translateX(40px) translateY(10px) scale(0.95);
+  }
+}
+
+@keyframes floaty {
+  0%,
+  100% {
+    transform: translateX(40px) translateY(10px) scale(0.95);
+  }
+  50% {
+    transform: translateX(32px) translateY(-60px) scale(1); /* Adjust the pixel value to control the 'float' height */
+  }
+}
+
+.wisp-logo {
+  margin: 0 auto;
+}
+
+#wisp {
+  animation:
+    zippy 1s ease-in-out 1 forwards,
+    floaty 7s infinite ease-in-out;
+  animation-delay: 0s, 1s;
+}
+
+.wisp-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-block: 2.5rem 0;
+}
+
+.wisp-subtitle {
+  margin-block: 0 2.5rem;
+}
+
+/* CTA Button Styles */
+.wisp-button {
+  display: inline-block;
+  position: relative; /* To position the pseudo-element */
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #8a3393 0%, #7e45af 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden; /* Keeps the pseudo-element inside the button bounds */
+  font-size: 1em;
+  text-decoration: none;
+  transform: translateY(0);
+}
+
+.wisp-button::before {
+  content: "";
+  position: absolute;
+  top: -50%; /* Start the pseudo-element off the top-left corner */
+  left: -50%;
+  width: 200%; /* Width should be enough to cover the button diagonally */
+  height: 200%; /* Same with the height */
+  background: rgba(
+    255,
+    255,
+    255,
+    0.75
+  ); /* White color with transparency for the glare */
+  transform: rotate(45deg) translateY(150%); /* Diagonal angle */
+
+  opacity: 0.75; /* Start fully transparent */
+}
+
+.wisp-button:active::before {
+  opacity: 0; /* Remove the glare on active state */
+}
+
+@keyframes bounce {
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Animation */
+@keyframes swipe {
+  100% {
+    transform: rotate(45deg) translateY(-150%);
+  }
+}
+
+.wisp-button:hover .wisp-button:focus {
+  animation: bounce 0.5s forwards; /* Use the animation */
+}
+
+.wisp-button:hover::before,
+.wisp-button:focus::before {
+  animation: swipe 0.5s forwards; /* Use the animation */
+}
+
+.wisp-footer-text {
+  margin: 0;
+}
