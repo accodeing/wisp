@@ -1,37 +1,42 @@
-import tables, times
+import system
 
-import path
+import templates
 
-type
-  CachedContent = object
-    content: string  # Store the file content
-    lastUsed: Time   # Timestamp for LRU
+const
+  CacheSize = 1.mb
 
-  Cache = object
-    items: Table[string, CachedContent]
-    root: string
-    maxSize: int
-    currentSize: int
+var
+  memory_ptr = cast[ptr UncheckedArray[byte]](alloc0(CacheSize))
+  memory_current_end: int64 = 0
 
-proc new_cache*(maxSize: int = 4 * 1024 * 1024, root: string = "/public"): Cache =
-  result = Cache(items: initTable[string, CachedContent](), maxSize: maxSize, currentSize: 0, root: root)
+proc cache_put*(data: string, size: int64): int64 =
+  let
+    data_ptr = cast[ptr byte](data[0].unsafeAddr)
+    destination = cast[ptr byte](memory_ptr[memory_current_end].addr)
 
-proc evict_cache(cache: var Cache) =
-  # Implement LRU eviction logic
-  var oldest: Time = get_time()
+  if memory_current_end + size > CacheSize:
+    raise newException(ValueError, "Not enough memory in cache to store data")
 
-proc cache_get(cache: var Cache, path: string, http_root: string): string =
-  let normalised_path = cache.root.normalise_path(path)
+  copyMem(destination, data_ptr, size)
 
-  if normalised_path in cache.items:
-    cache.items[normalised_path].last_used = get_time()
-    return cache.items[normalised_path].content
+  result = memory_current_end
+  memory_current_end += size
 
-  let content = readFile(normalised_path)
-  cache.items[normalised_path] = CachedContent(content: content, lastUsed: getTime())
-  cache.currentSize += content.len
+proc cache_get*(start: int64, size: int64): string =
+  if start + size > CacheSize:
+    raise newException(ValueError, "Trying to access cache data outside of cache")
 
-  if cache.currentSize > cache.maxSize:
-    evict_cache(cache)
+  result = newString(size)
+  
+  let
+    result_ptr = cast[ptr byte](result[0].addr)
+    start_ptr = cast[ptr byte](memory_ptr[start].addr)
 
-  return content
+  copyMem(result_ptr, start_ptr, size)
+
+proc cache_clear*() =
+  memory_current_end = 0
+
+proc cache_dealloc*() =
+  dealloc(memory_ptr)
+

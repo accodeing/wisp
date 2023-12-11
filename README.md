@@ -1,4 +1,6 @@
-![](public/wisp.svg "Wisp")
+<div align="center">
+ <img src="public/wisp.svg" alt="Wisp" />
+</div>
 
 # What is Wisp?
 

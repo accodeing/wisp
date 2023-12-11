@@ -1,15 +1,26 @@
-import os, posix
+import std/exitprocs, system
+from posix import signal, SIGHUP
 
-import wisp/[server, file_manager]
+import wisp/[server, file_manager, templates]
 
-proc signal_handler(signal: cint) {.cdecl.} =
-  case signal
-  of SIGHUP:
-    index_files("./public")
+proc shutdown() {.noconv.} =
+  echo "Shutting down..."
+  quit()
+
+proc cleanup() {.noconv.} =
+  echo "Cleaning up..."
+  quit()
+
+proc signal_handler(signal: cint) {.noconv.} =
+  if signal == SIGHUP:
+    echo "Reloading..."
+    create_index("./public")
   else:
     discard
 
 when isMainModule:
-  setControlCHook(signal_handler)
-  posix.signal(SIGHUP, signal_handler)
+  setControlCHook(shutdown)
+  addExitProc(cleanup)
+  signal(SIGHUP, signal_handler)
+  create_index("./public")
   serve( http_root = "public", port = "8080" )
